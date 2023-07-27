@@ -4,7 +4,6 @@ from django.core.validators import RegexValidator
 
 
 # Create your models here.
-
 class Pupil(models.Model):
     personal_id = models.IntegerField(null=False, blank=False, unique=True)
     full_name = models.CharField(null=False, max_length=50, blank=False)
@@ -34,21 +33,22 @@ class Parent(models.Model):
         db_table = 'parent'
 
     def __str__(self):
-        return f'{self.parent_id, self.user.first_name, self.user.last_name}'
+        return f'{self.parent_id, self.user.first_name, self.user.last_name, self.user.email}'
 
 
 class Book(models.Model):
     book_id = models.CharField(max_length=50, null=False, blank=False, unique=True)
     book_name = models.CharField(max_length=100, null=False, blank=False)
     book_grade = models.CharField(null=False, max_length=15, blank=False)
-    storage = models.IntegerField(null=False, blank=False)
+    value = models.IntegerField(null=True, blank=True, default=1)
+    storage = models.IntegerField(null=True, blank=False)
 
     class Meta:
         db_table = 'Book'
 
     def __str__(self):
-        return f' שם - {self.book_name}  | ' \
-               f' כיתה - {self.book_grade}'
+        return f'{self.book_grade} | {self.book_name} |' \
+               f'{self.book_id}'
 
 
 class Rent(models.Model):
@@ -95,4 +95,8 @@ class Rent(models.Model):
         db_table = 'rent'
 
     def __str__(self):
-        return f'Date: {self.start_date.strftime("%d/%m/%Y"), self.client, self.book_1}'
+        return f'Client: {self.client},\n Books:\n ({self.book_1}),\n ({self.book_2}),\n ({self.book_3}),\n' \
+               f'({self.book_4}),\n ({self.book_5}),\n ({self.book_6}),\n ' \
+               f'({self.book_7}),\n ({self.book_8}),\n ({self.book_9}),\n ({self.book_10}),\n' \
+               f' ({self.book_11}),\n ({self.book_12}),\n ({self.book_13})\n' \
+               f'-------------------------------------------------------------------------------------\n\n'

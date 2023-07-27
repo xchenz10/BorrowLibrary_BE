@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Parent, Pupil, User, Book, Rent
+from .models import Parent, Pupil, Book, Rent
 
 # from django.contrib.sessions import
 
