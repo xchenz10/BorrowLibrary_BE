@@ -253,6 +253,7 @@ def edit_profile(request):
 @cache_page(60 * 60 * 24)
 @api_view(['GET'])
 def book_value(request):
+    """ Filtering and returning the books' values """
     if request.method == 'GET':
         try:
             books = Book.objects.filter(value__range=(2, 100)).order_by('book_grade')
@@ -266,7 +267,11 @@ def book_value(request):
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def dash_books(request):
-    """Dashboard for admin to track after the books storage"""
+    """ Dashboard for admin to:
+        - Track after the books' storage
+        - Create new books
+        - Edit a book
+        - Delete a book """
 
     if request.method == 'GET':
         all_books = Book.objects.order_by('book_grade')
@@ -337,8 +342,13 @@ def dash_rents(request):
         return Response({'data': rs.data}, status=200)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET', 'PUT'])
 def dash_client_rent(request):
+    """ View function to handle GET and PUT requests related to client rents.
+        - Return the dictionary of rented books as a response.
+        - Return the serialized rent data as a response.
+    """
+
     if request.method == 'GET':
         p_id = request.query_params.get('p_id')
         try:
@@ -369,29 +379,15 @@ def dash_client_rent(request):
 
         rent_instance = rent.first()
         selected_books = request.data.get('books', [])
-
         for i in range(1, 18):
             book_attr_name = f'book_{i}'
             related_book = getattr(rent_instance, book_attr_name)
-
             if related_book and related_book.book_id in [book.get('book_id') for book in selected_books]:
                 setattr(rent_instance, book_attr_name, None)
 
         rent_instance.save()
-
         serializer = RentSerializer2(rent_instance)
         return Response(serializer.data, status=200)
-
-    # elif request.method == 'PUT':
-    #
-    #     p_id = request.query_params.get('p_id')
-    #     pupil = Pupil.objects.get(personal_id=p_id)
-    #     rent = Rent.objects.filter(client=pupil)
-    #     rent_instance = rent.first()
-    #     rent_data = RentSerializer2(rent_instance).data
-    #     rented_books = {f'book_{i}': book_data for i, book_data in rent_data.items()
-    #                     if book_data is not None and not i.startswith('start_date')}
-    #     pass
 
 
 @api_view(['GET'])
@@ -408,7 +404,7 @@ def check_superuser(request):
 
 @api_view(['POST'])
 def contact_msg(request):
-    """Contact msg from client to the school"""
+    """Contact msg from client direct to the school mailbox"""
 
     p_id = request.data.get('p_id')
 
